@@ -1,0 +1,11 @@
+{
+  "agentId": "agent-1",
+  "seed": 42,
+  "totalTrades": 600,
+  "processedTrades": 423,
+  "blockedTrades": 177,
+  "finalState": "PAUSED",
+  "unprotectedFinalEquity": -12863.17,
+  "protectedFinalEquity": 9512.07,
+  "lossAvoidedUsd": 22375.239999999998
+}

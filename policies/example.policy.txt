@@ -1,0 +1,27 @@
+# Agent Circuit Compiler — example risk policy
+#
+# One rule per line: <ACTION> IF <METRIC> <OP> <VALUE>[%] [OVER <N> TRADES]
+# ACTION: WARN | PAUSE | HALT | KILL   (severity increases in that order)
+# Lines starting with # are comments. Case-insensitive.
+
+# --- Drawdown: whole-equity-curve, peak vs current ---
+WARN IF drawdown > 3%
+PAUSE IF drawdown > 8%
+HALT IF drawdown > 15%
+
+# --- Concentration: is the agent diversified or all-in on one symbol? ---
+WARN IF hhi > 0.5 OVER 15 TRADES
+HALT IF hhi > 0.75 OVER 15 TRADES
+HALT IF exposurePct > 80% OVER 15 TRADES
+
+# --- Win rate: is the strategy still working? ---
+PAUSE IF winRate < 25% OVER 30 TRADES
+
+# --- Hard USD loss limits, reset at UTC midnight ---
+HALT IF dailyLossUsd > 800
+KILL IF dailyLossUsd > 2000
+
+# --- Runaway-loop detection: an agent firing trades faster than a human
+#     could sanity-check is treated as a bug, not a strategy ---
+WARN IF tradeFrequency > 10
+HALT IF tradeFrequency > 25

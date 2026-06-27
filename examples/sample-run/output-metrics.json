@@ -1,0 +1,13 @@
+{
+  "timestamp": 1780275297281,
+  "tradeCount": 423,
+  "equity": 9512.07,
+  "peakEquity": 10358.25,
+  "drawdown": 0.081691,
+  "hhi": 0.269023,
+  "exposurePct": 0.332214,
+  "winRate": 0.45,
+  "sharpe": -0.303163,
+  "dailyLossUsd": 487.93,
+  "tradeFrequency": 10
+}

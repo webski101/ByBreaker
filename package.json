@@ -1,0 +1,22 @@
+{
+  "name": "circuit-compiler",
+  "version": "0.1.0",
+  "description": "Compiles plain-English risk policies into a deterministic runtime enforcer that can pause, halt, or kill any connected trading agent — zero runtime dependencies.",
+  "type": "module",
+  "main": "src/cli.js",
+  "bin": {
+    "circuit-compiler": "src/cli.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "demo": "node src/cli.js simulate --policy policies/example.policy.txt --trades 600 --out examples/sample-run && node src/cli.js verify --log examples/sample-run/output-audit-log.jsonl",
+    "live": "node src/cli.js live --policy policies/example.policy.txt --out examples/live-run",
+    "serve": "node src/cli.js serve --dir dashboard --log examples/sample-run/output-audit-log.jsonl --metrics examples/sample-run/output-metrics.json --port 4173"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
