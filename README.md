@@ -164,6 +164,26 @@ examples/sample-run/           checked-in, reproducible synthetic-demo output
 test/                          42 tests, node's built-in test runner
 ```
 
+
+
+## Progress
+
+**Key challenges and how they were solved:**
+
+- **Windowed metrics firing on insufficient data** — a single concentrated trade isn't "100% concentration risk," it's one data point. Fixed by requiring metrics like HHI and win rate to report `undefined` (never fire) until their full rolling window has real history.
+- **Daily-loss definition was too aggressive at first** — summing every losing trade's magnitude tripped even during a net-profitable day. Fixed it to net loss from the day's starting equity, matching how real "max daily loss" limits actually work.
+- **Keeping enforcement deterministic without an LLM** — the policy grammar is a small, finite, regex-based parser, not free-form NLP. One unambiguous parse per line, or a compile error — it never guesses, because a circuit breaker that fails open on a typo is worse than no circuit breaker.
+- **Being honest about what "Bitget integration" can mean today** — Agent Hub's current MCP surface is read/perception-first, not order execution. So `guardAgentHubTools()` wraps an agent's *own* order-placement tool calls as a reference monitor, rather than claiming a remote kill-switch that doesn't exist yet.
+- **Proving the demo isn't fabricated** — built a dashboard replay that runs the actual `compiler.js` / `metrics.js` / `enforcer.js` source files unmodified (they have zero Node-only dependencies) live in-browser, and re-verifies the audit log's SHA-256 hash chain client-side instead of just trusting the displayed data.
+
+**Completed:** deterministic policy compiler; rolling risk-metrics engine; enforcer state machine with human-only reset; hash-chained tamper-evident audit log; `guardAgentHubTools()` guard + webhook adapter; reproducible seeded demo (checked into the repo); live mode pulling real Bitget public prices into a real paper-trading strategy; a deployed dashboard that runs the real engine in-browser with client-side chain re-verification; 42 automated tests; zero runtime dependencies.
+
+**Missing / next steps:** see "Honest limitations" below — in short, the rule grammar needs manual translation from prose today (an LLM-assisted translation step in front of the deterministic compiler is the natural next addition), and there's no always-on hosted live mode yet (Vercel can't run a continuous poll loop — that needs a small persistent host).
+
+**Frameworks, models, and APIs used:** Node.js, zero runtime dependencies (only built-ins: `fs`, `http`, `https`, `crypto`). Browser side: Web Crypto API, ES modules, no build step. **Bitget tools used:** the public Spot Market Tickers API (real-time price feed, no auth) for live mode. `guardAgentHubTools()` is built and unit-tested against a mock client matching Agent Hub's MCP order-tool interface; it has not been run against a live Agent Hub instance with real API keys. Did not use Playbook, Skill Hub, or the US Stocks Data API. No LLM/AI model runs in the enforcement path itself — that absence is the actual point of the project. Built using Claude (Anthropic) as the development tool throughout.
+
+
+
 ## Honest limitations
 
 - The policy grammar is intentionally small. It's a controlled language, not free-form English — that's a feature (determinism), but it means a real compliance officer's prose still needs translating into these lines by hand today.
